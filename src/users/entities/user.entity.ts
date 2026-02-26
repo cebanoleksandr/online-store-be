@@ -25,4 +25,10 @@ export class User {
     default: UserRole.USER,
   })
   role: UserRole;
+
+  @Column({ nullable: true })
+  resetToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resetTokenExpires: Date;
 }

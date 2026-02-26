@@ -19,11 +19,6 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
-  }
-
   @Get('search/items')
   search(@Query('q') q: string) {
     return this.productsService.search(q);
@@ -71,5 +66,15 @@ export class ProductsController {
   @SetMetadata('roles', [UserRole.ADMIN])
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
+  }
+
+  @Get('seed')
+  seed() {
+    return this.productsService.seed();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productsService.findOne(+id);
   }
 }

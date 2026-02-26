@@ -8,7 +8,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(email: string, pass: string) {
     const hashedPassword = await bcrypt.hash(pass, 10);
@@ -27,9 +27,19 @@ export class AuthService {
     const isMatch = await bcrypt.compare(pass, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid password');
 
-    const payload = { email: user.email, sub: user.id };
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
+      user: {
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName
+      }
     };
   }
 }

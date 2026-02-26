@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile, SetMetadata } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -7,6 +7,8 @@ import { diskStorage } from 'multer';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { existsSync, mkdirSync } from 'fs';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UserRole } from 'src/users/entities/user.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -29,6 +31,8 @@ export class ProductsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', [UserRole.ADMIN])
   create(@Body() productData: CreateProductDto) {
     return this.productsService.create(productData);
   }
@@ -55,12 +59,16 @@ export class ProductsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', [UserRole.ADMIN])
   update(@Param('id') id: string, @Body() updateData: UpdateProductDto) {
     return this.productsService.update(+id, updateData);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @SetMetadata('roles', [UserRole.ADMIN])
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
   }

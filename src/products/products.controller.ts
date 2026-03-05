@@ -24,7 +24,6 @@ export class ProductsController {
     return this.productsService.search(q);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', [UserRole.ADMIN])
@@ -52,7 +51,6 @@ export class ProductsController {
     return { url: `/uploads/${file.filename}` };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', [UserRole.ADMIN])
@@ -60,7 +58,6 @@ export class ProductsController {
     return this.productsService.update(+id, updateData);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @SetMetadata('roles', [UserRole.ADMIN])

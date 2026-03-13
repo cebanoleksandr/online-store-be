@@ -17,8 +17,14 @@ export class ProductsService {
   }
 
   // Read All
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.find({ order: { createdAt: 'DESC' } });
+  async findAll(filters: { category?: string, rating?: number }): Promise<Product[]> {
+    return this.productRepository.find({
+      where: {
+        ...(filters.category && { category: filters.category }),
+        ...(filters.rating && { rating: filters.rating }),
+      },
+      order: { createdAt: 'DESC' },
+    });
   }
 
   // Read One
@@ -60,7 +66,7 @@ export class ProductsService {
       price: 1200 + i * 150,
       oldPrice: 1500 + i * 150,
       rating: 5,
-      imageUrl: `https://via.placeholder.com/230x270?text=Item+${i + 1}`,
+      imageUrl: `https://doiqgxrhp4iii.cloudfront.net/A52%20(1).jpg`,
       category: i < 4 ? 'New items' : i < 8 ? 'Discounts' : 'Top sellers',
     }));
 

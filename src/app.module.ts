@@ -7,6 +7,7 @@ import { ProductsModule } from './products/products.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CartModule } from './cart/cart.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { CartModule } from './cart/cart.module';
     AuthModule, 
     UsersModule, 
     ProductsModule, 
-    CartModule
+    CartModule, FavoritesModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile, SetMetadata, Request } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,8 +15,9 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Get()
-  findAll(@Query() query: { category?: string, rating?: number }) {
-    return this.productsService.findAll(query);
+  findAll(@Query() query: { category?: string, rating?: number }, @Request() req) {
+    const userId = req.user?.userId;
+    return this.productsService.findAll(query, userId);
   }
 
   @Get('search/items')

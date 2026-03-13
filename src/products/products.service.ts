@@ -17,14 +17,37 @@ export class ProductsService {
   }
 
   // Read All
-  async findAll(filters: { category?: string, rating?: number }): Promise<Product[]> {
-    return this.productRepository.find({
-      where: {
-        ...(filters.category && { category: filters.category }),
-        ...(filters.rating && { rating: filters.rating }),
-      },
-      order: { createdAt: 'DESC' },
-    });
+  // products.service.ts
+
+  async findAll(filters: { category?: string, rating?: number }, userId?: number): Promise<any[]> {
+    const query = this.productRepository.createQueryBuilder('product');
+
+    // Додаємо фільтри, якщо вони є
+    if (filters.category) {
+      query.andWhere('product.category = :category', { category: filters.category });
+    }
+    if (filters.rating) {
+      query.andWhere('product.rating = :rating', { rating: filters.rating });
+    }
+
+    // Якщо користувач авторизований, перевіряємо наявність в обраному
+    if (userId) {
+      query.leftJoinAndSelect(
+        'product.favorites',
+        'favorite',
+        'favorite.userId = :userId',
+        { userId }
+      );
+    }
+
+    const products = await query.orderBy('product.createdAt', 'DESC').getMany();
+
+    // Мапимо результат, щоб додати булеве поле isFavorite
+    return products.map(product => ({
+      ...product,
+      isFavorite: userId ? product.favorites.length > 0 : false,
+      favorites: undefined, // Видаляємо масив з відповіді, щоб не перевантажувати JSON
+    }));
   }
 
   // Read One

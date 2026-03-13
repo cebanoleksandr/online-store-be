@@ -8,11 +8,11 @@ export class CartService {
   constructor(
     @InjectRepository(CartItem)
     private cartRepository: Repository<CartItem>,
-  ) {}
+  ) { }
 
   async addToCart(userId: number, productId: number, quantity: number) {
     let item = await this.cartRepository.findOne({ where: { user: { id: userId }, product: { id: productId } } });
-    
+
     if (item) {
       item.quantity += quantity;
     } else {
@@ -26,6 +26,22 @@ export class CartService {
   }
 
   async remove(id: number) {
-    await this.cartRepository.delete(id);
+    return await this.cartRepository.delete(id);
+  }
+
+  async decreaseQuantity(id: number) {
+    const item = await this.cartRepository.findOne({ where: { id } });
+
+    if (!item) {
+      throw new Error('Товар у кошику не знайдено');
+    }
+
+    if (item.quantity > 1) {
+      item.quantity -= 1;
+      return this.cartRepository.save(item);
+    } else {
+      // Якщо кількість 1, то наступне зменшення видаляє товар
+      return this.cartRepository.delete(id);
+    }
   }
 }

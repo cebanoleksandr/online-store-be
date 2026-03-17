@@ -52,12 +52,17 @@ export class AuthService {
 
     const token = randomBytes(20).toString('hex');
     user.resetToken = token;
-    user.resetTokenExpires = new Date(Date.now() + 3600000);
+    user.resetTokenExpires = new Date(Date.now() + 3600000); // 1 година
 
     await this.usersService.save(user);
 
     console.log(`🔑 RESET TOKEN для ${email}: ${token}`);
-    return { message: 'Instructions have been sent to email' };
+
+    // Повертаємо токен прямо у відповіді клієнту
+    return {
+      message: 'Token generated successfully',
+      token: token // <--- Додаємо це поле
+    };
   }
 
   async resetPassword(resetDto: ResetPasswordDto) {

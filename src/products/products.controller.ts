@@ -9,12 +9,14 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { existsSync, mkdirSync } from 'fs';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/users/entities/user.entity';
+import { OptionalJwtAuthGuard } from 'src/auth/guards/optional-jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
   findAll(@Query() query: { category?: string, rating?: number }, @Request() req) {
     const userId = req.user?.userId;
     return this.productsService.findAll(query, userId);

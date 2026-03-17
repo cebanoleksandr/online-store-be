@@ -8,7 +8,7 @@ export class FavoritesService {
   constructor(
     @InjectRepository(Favorite)
     private favoriteRepository: Repository<Favorite>,
-  ) {}
+  ) { }
 
   async toggleFavorite(userId: number, productId: number) {
     // Перевіряємо, чи вже є в обраному
@@ -32,9 +32,15 @@ export class FavoritesService {
   }
 
   async getMyFavorites(userId: number) {
-    return this.favoriteRepository.find({
+    const favorites = await this.favoriteRepository.find({
       where: { user: { id: userId } },
-      relations: ['product'], // Щоб отримати дані про товар
+      relations: ['product'], // Завантажуємо дані продукту
     });
+
+    // Перетворюємо масив зв'язків у масив продуктів з полем isFavorite
+    return favorites.map(fav => ({
+      ...fav.product,
+      isFavorite: true // Оскільки це список обраного, тут завжди true
+    }));
   }
 }
